@@ -1,0 +1,209 @@
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Spend $100 trillion Simulator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Montserrat', Arial, sans-serif; background: #fafbfc; }
+    .item-img { width: 64px; height: 64px; object-fit: cover; border-radius: 0.5rem;}
+    .item-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    ::selection { background: #c7f0ff; }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 flex flex-col">
+
+  <header class="w-full bg-blue-700 py-8 text-center text-white shadow-md">
+    <h1 class="text-4xl font-bold mb-2 tracking-tight">Spend $100 trillion</h1>
+    <p class="text-lg opacity-90">How fast can you spend it all? Try buying anything below!</p>
+  </header>
+
+  <main class="flex flex-col items-center flex-1 py-10 px-4">
+    <div class="w-full max-w-4xl mb-6">
+      <div class="flex items-center justify-between bg-white shadow p-6 rounded-xl">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-700">
+          <i class="fas fa-money-bill-wave mr-2 text-green-500"></i>
+          Remaining: 
+          <span id="money" class="text-green-500">$200,000,000,000,000 </span>
+        </h2>
+        <button class="bg-green-500 hover:bg-green-600 transition px-4 py-2 text-white rounded-lg font-bold text-md" onclick="resetSpend()">
+          <i class="fas fa-undo mr-2"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <section class="w-full max-w-4xl">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- JavaScript populates products here -->
+      </div>
+    </section>
+
+    <section class="w-full max-w-2xl mt-12">
+      <h3 class="font-semibold text-xl text-gray-700 mb-3"><i class="fas fa-shopping-cart mr-2"></i> Your Purchases</h3>
+      <ul id="cart" class="bg-white rounded-lg shadow p-5 space-y-2 min-h-[48px]"></ul>
+    </section>
+  </main>
+
+  <footer class="w-full mt-auto bg-gray-800 text-gray-100 text-center py-5">
+    <span>.fun | Made with <i class="fas fa-heart text-red-400"></i> for fun | <a class="underline" href="https://github.com/" target="_blank">Source</a></span>
+  </footer>
+
+  <script>
+    // All prices in USD, image URLs use unsplash as placeholder
+    const products = [
+      { name: "G-wagon", price: 180000, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050183.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Flip Flops", price: 500, img: "https://assets.onecompiler.app/43fnjak35/43gq8m2jf/1000051484.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "starbuck's coffee", price: 100, img: "https://assets.onecompiler.app/43fnjak35/43gq8m2jf/1000051485.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "cinema theater", price: 1200, img: "https://assets.onecompiler.app/43fnjak35/43gq8m2jf/1000051486.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Book", price: 15, img: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=facearea&w=128&q=80" },
+      { name: "x100bodyguards", price: 45000, img: "https://assets.onecompiler.app/43fnjak35/43gq8m2jf/1000051487.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "playstation 5", price: 6000, img: "https://assets.onecompiler.app/43fnjak35/43gq8m2jf/1000051488.png?auto=format&fit=facearea&w=128&q=80" },
+      { name: "lord alto", price: 3500, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050192.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Year of Netflix", price: 400, img: "https://assets.onecompiler.app/43fnjak35/43gq8m2jf/1000051489.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Air Jordans", price: 850, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051491.webp?auto=format&fit=facearea&w=128&q=80" },
+      { name: "golden headphones", price: 4900, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051492.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Gaming pc", price: 10000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051493.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "military", price: 350000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051494.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Smartphone", price: 1299, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050184.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Bike", price: 800, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050190.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "lion", price: 15000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051495.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "lemborgini", price: 750000, img: "https://assets.onecompiler.app/43fnjak35/43fnrc4uw/1000050182.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Auto Rickshaw", price: 100, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051496.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Horse", price: 250, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051497.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Acre of Farmland", price: 5000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051498.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: " Designer clothes", price: 5500, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051499.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "jacuzzi", price: 6000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051500.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Luxury Wine", price: 300000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051501.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Diamonds", price: 4000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051502.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "privatjet", price: 2000000, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050187.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Rolex", price: 65000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051503.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "bmw cars", price: 3000000, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050188.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "companies", price: 75000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051504.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "lemborgini", price: 150000, img: "https://assets.onecompiler.app/43fnjak35/43fnrc4uw/1000050182.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "ji wagon R", price: 250000, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050193.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Single Family Home", price: 300000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051505.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Gold Bar", price: 700000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051506.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "McDonalds Franchise", price: 1500000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051507.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "hotels", price: 5250000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051508.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Yacht", price: 7500000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051509.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "ipl team", price: 8000000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051510.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Formula 1 Car", price: 15000000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051511.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Apache Helicopter", price: 31000000, img: "https://assets.onecompiler.app/43fnjak35/43fnrkn2n/1000050186.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Mansion", price: 45000000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051512.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Make a Movie", price: 100000000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051513.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Boeing 747", price: 420000000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051514.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Mona Lisa painting", price: 7800000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051515.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "weapons", price: 80000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051516.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "Cruise Ship", price: 20000000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051517.jpg?auto=format&fit=facearea&w=128&q=80" },
+      { name: "google company", price: 212000000000, img: "https://assets.onecompiler.app/43fnjak35/43gq9vv9y/1000051518.jpg?auto=format&fit=facearea&w=128&q=80" },
+    ];
+
+    // Cart state
+    let state = {
+      left: 100_000_000_000,
+      purchases: Array(products.length).fill(0)
+    }
+
+    // DOM references
+    const grid = document.querySelector('.grid');
+    const moneySpan = document.getElementById('money');
+    const cart = document.getElementById('cart');
+
+    // Format number as currency
+    function format(n) {
+      return '$' + n.toLocaleString('en-US');
+    }
+
+    // Draw products
+    function renderProducts() {
+      grid.innerHTML = "";
+      products.forEach((p, idx) => {
+        // Card
+        const disableBuy = state.left < p.price;
+        grid.innerHTML += `
+          <div class="flex flex-col items-center bg-white rounded-xl shadow px-4 py-6">
+            <img src="${p.img}" alt="${p.name}" class="item-img mb-4 shadow" onerror="this.src='https://via.placeholder.com/64?text=No+Img';">
+            <h4 class="font-semibold text-lg mb-1 text-gray-700">${p.name}</h4>
+            <div class="mb-3 text-green-600 font-bold">${format(p.price)}</div>
+            <div class="flex items-center space-x-2 mb-2">
+              <button class="item-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xl transition" onclick="buy(${idx})" ${disableBuy ? 'disabled' : ''}><i class="fas fa-plus"></i></button>
+              <span class="font-bold">${state.purchases[idx]}</span>
+              <button class="item-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-xl transition" onclick="sell(${idx})" ${state.purchases[idx] === 0 ? 'disabled' : ''}><i class="fas fa-minus"></i></button>
+            </div>
+            <div class="text-gray-400 text-xs">Spent: <span class="font-semibold">${format(state.purchases[idx] * p.price)}</span></div>
+          </div>
+        `;
+      });
+    }
+
+    // Draw cart
+    function renderCart() {
+      cart.innerHTML = '';
+      let totalSpent = 0;
+      state.purchases.forEach((qty, i) => {
+        if (qty > 0) {
+          totalSpent += qty * products[i].price;
+          cart.innerHTML += `
+            <li class="flex items-center space-x-3 py-2 border-b border-gray-100">
+              <img src="${products[i].img}" class="w-7 h-7 rounded" alt="">
+              <span class="flex-1 text-gray-800">${products[i].name} x <span class="font-bold">${qty}</span></span>
+              <span class="text-green-600 font-semibold">${format(qty * products[i].price)}</span>
+            </li>
+          `;
+        }
+      });
+      if (totalSpent === 0) {
+        cart.innerHTML = '<li class="italic text-gray-400">Your cart is empty. Start spending!</li>';
+      } else {
+        cart.innerHTML += `<li class="flex justify-between text-lg font-bold pt-3 text-gray-700"><span>Total Spent:</span> <span>${format(totalSpent)}</span></li>`;
+      }
+    }
+
+    // Render money left
+    function renderMoney() {
+      moneySpan.textContent = format(state.left);
+    }
+
+    // Buy
+    window.buy = idx => {
+      if (state.left >= products[idx].price) {
+        state.purchases[idx]++;
+        state.left -= products[idx].price;
+        update();
+      }
+    }
+
+    // Sell
+    window.sell = idx => {
+      if (state.purchases[idx] > 0) {
+        state.purchases[idx]--;
+        state.left += products[idx].price;
+        update();
+      }
+    }
+
+    // Reset
+    window.resetSpend = () => {
+      state = {
+        left: 100_000_000_000,
+        purchases: Array(products.length).fill(0)
+      };
+      update();
+    }
+
+    // Update UI
+    function update() {
+      renderMoney();
+      renderProducts();
+      renderCart();
+    }
+
+    // Initial
+    update();
+  </script>
+</body>
+</html>
+
